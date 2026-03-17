@@ -38,6 +38,7 @@ struct ReactionOut{
     float reaction_value;
 
 };
+
 ReactionOut reaction;
 
 Filter valueFilter(WINDOW_SIZE);
@@ -56,7 +57,6 @@ void init_variables(){
     reaction.reaction_value = -1;
 
     digitalWrite(RELAY_PIN, LOW);
-
 }
 
 
@@ -177,7 +177,6 @@ void setup(){
 }
 
 void loop(){
-
 
     delay(DT);
     if (!Color_Sensor.readAllChannels()){
