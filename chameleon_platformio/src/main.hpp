@@ -34,6 +34,11 @@ struct ReactionOut {
     float reaction_value;
 };
 
+struct float_pair {
+    float first;
+    float second;
+};
+
 void init_variables();
 void collectData(float* data);
 void analyze(float* data);
