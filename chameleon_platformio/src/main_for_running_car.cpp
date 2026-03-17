@@ -2,10 +2,6 @@
 
 // ------- Objects -------
 ReactionOut reaction;
-// Filter valueFilter(WINDOW_SIZE);
-// Filter derFilter(WINDOW_SIZE);
-// DDx derivative(DT);
-// Adafruit_AS7341 Color_Sensor;
 Car car;
 // -----------------------
 

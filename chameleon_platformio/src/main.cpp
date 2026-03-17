@@ -48,7 +48,7 @@ void loop(){
     // collectData((float*)&data);
 
 
-    //MEASUREDATA
+    // MEASUREDATA
     // analyze(data);
 
     if (!car.reaction_done){
@@ -59,14 +59,6 @@ void loop(){
     
     moveCar();
 }
-
-// loop for testing speed
-// void loop() {
-//     if (car.time_car_move == -1){
-//         car.time_car_move = millis();
-//         digitalWrite(RELAY_PIN, HIGH);
-//     }
-// }
 
 // inits car and reaction time variables; makes sure relay is off
 void init_variables(){
