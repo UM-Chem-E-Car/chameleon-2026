@@ -22,9 +22,9 @@ class Filter{
 
   private:
       int WS;
-      float * data;
       int index;
       float avg;
+      float * data;
 };
 
 class DDx{

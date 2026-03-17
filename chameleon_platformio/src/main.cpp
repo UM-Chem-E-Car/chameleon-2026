@@ -26,6 +26,7 @@ void setup(){
     // Color_Sensor.setASTEP((dt/2.78e-6 - 1)*1000);
     Color_Sensor.setGain(AS7341_GAIN_256X);
     Serial.println("Program Started");
+    // delay(5000); // testing speed
 
 }
 
@@ -58,6 +59,14 @@ void loop(){
     
     moveCar();
 }
+
+// loop for testing speed
+// void loop() {
+//     if (car.time_car_move == -1){
+//         car.time_car_move = millis();
+//         digitalWrite(RELAY_PIN, HIGH);
+//     }
+// }
 
 // inits car and reaction time variables; makes sure relay is off
 void init_variables(){
@@ -103,6 +112,7 @@ void collectData(float* data){
     // data[4] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_555nm_F5) / pow(2,b) * 100;
     // data[5] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_590nm_F6) / pow(2,b) * 100;
     // data[6] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_630nm_F7) / pow(2,b) * 100;
+
     data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100;
     data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100;
 }

@@ -42,6 +42,7 @@ struct float_pair {
 void init_variables();
 void collectData(float* data);
 void analyze(float* data);
+float_pair analyze_number(float num);
 void waitForValveOpen();
 void calcDistance();
 void moveCar();
