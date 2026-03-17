@@ -116,6 +116,7 @@ void analyze(float* data){
     float_pair red_values = analyze_number(data[0]);
     float_pair clear_values = analyze_number(data[1]);
 
+    // TODO: USE BOTH RED AND CLEAR VALUES AND DETECT CHANGE
     // detect if done
     if ((millis() - car.time_valve_open) > SLOPE_GRACE_PERIOD && abs(red_values.second) < SLOPE_TRIGGER_VALUE){
         reaction.time_reaction_end = millis() - car.time_valve_open;
