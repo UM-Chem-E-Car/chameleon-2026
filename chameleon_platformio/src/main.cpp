@@ -105,8 +105,8 @@ void collectData(float* data){
     // data[5] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_590nm_F6) / pow(2,b) * 100;
     // data[6] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_630nm_F7) / pow(2,b) * 100;
 
-    data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100;
-    data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100;
+    data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100; // looking out for when it stops; defines point on curve
+    data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100; // regimes (defined at end state)
 }
 
 void analyze(float* data){
