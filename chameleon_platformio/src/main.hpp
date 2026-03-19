@@ -15,7 +15,7 @@
 #define SLOPE_TRIGGER_VALUE 1
 
 
-#define SPEED .05
+// #define SPEED .05
 #define CURVE_A -.15
 #define CURVE_B 24.75
 

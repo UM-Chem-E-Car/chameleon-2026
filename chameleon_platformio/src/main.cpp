@@ -18,7 +18,7 @@ void setup(){
     if (!Color_Sensor.begin()){
         Serial.println("Could not find AS7341");
         while (1) {
-            delay(10); 
+            delay(10);
         }
     }
     Color_Sensor.setATIME(30);
@@ -44,7 +44,7 @@ void loop(){
     //     return;
     // }
 
-    // float data[8];
+    // float data[2];
     // collectData((float*)&data);
 
 
@@ -141,19 +141,14 @@ float_pair analyze_number(float num) {
     return avg_values;
 }
 
-void calcDistance(){
+void calcMotorRuntime(){
     if (car.calculated_distance_bool){
         return;
     }
 
-    float distance = CURVE_A * car.reaction_done + CURVE_B;
-    if (reaction.reaction_value < 3.5){
-        distance += 15;
-    }
-    // distance = 19.9; // testing purposes; runs with predetermined distance
+    car.time_to_run = CURVE_A * car.reaction_done + CURVE_B;
 
-    car.time_to_run = distance * 100 / SPEED;
-    Serial.println("Calculated Distance: " + String(distance));
+    Serial.println("Calculated runtime: " + String(car.time_to_run));
     Serial.println("TIMETORUN: " + String(car.time_to_run));
     car.calculated_distance_bool = true;
 }
