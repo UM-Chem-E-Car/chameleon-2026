@@ -55,7 +55,7 @@ void loop(){
         return;
     }
     
-    calcDistance();
+    calcMotorRuntime();
     
     moveCar();
 }
