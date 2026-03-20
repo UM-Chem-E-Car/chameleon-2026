@@ -10,6 +10,7 @@ void setup(){
     pinMode(RELAY_PIN, OUTPUT);
     pinMode(VALVE_PIN_IN, INPUT);     
 
+    car.time_car_move = -1;
     Serial.println("Program Started");
     delay(5000); // testing speed
 
@@ -17,7 +18,7 @@ void setup(){
 
 // loop for testing speed
 void loop() {
-    if (car.time_car_move == -1){
+    if (car.time_car_move == -1){ 
         car.time_car_move = millis();
         digitalWrite(RELAY_PIN, HIGH);
     }
