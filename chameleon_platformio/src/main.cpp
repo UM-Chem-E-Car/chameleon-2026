@@ -26,7 +26,6 @@ void setup(){
     // Color_Sensor.setASTEP((dt/2.78e-6 - 1)*1000);
     Color_Sensor.setGain(AS7341_GAIN_256X);
     Serial.println("Program Started");
-    // delay(5000); // testing speed
 
 }
 
@@ -40,16 +39,16 @@ void loop(){
 
     waitForValveOpen();
 
-    // if (car.time_valve_open == -1){
-    //     return;
-    // }
+    if (car.time_valve_open == -1){
+        return;
+    }
 
-    // float data[2];
-    // collectData((float*)&data);
+    float data[2];
+    collectData((float*)&data);
 
 
     // MEASUREDATA
-    // analyze(data);
+    analyze(data);
 
     if (!car.reaction_done){
         return;
@@ -97,16 +96,9 @@ void collectData(float* data){
         return;
     }
     int b = 16;
-    // data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_415nm_F1) / pow(2,b) * 100;
-    // data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_445nm_F2) / pow(2,b) * 100;
-    // data[2] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_480nm_F3) / pow(2,b) * 100;
-    // data[3] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_515nm_F4) / pow(2,b) * 100;
-    // data[4] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_555nm_F5) / pow(2,b) * 100;
-    // data[5] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_590nm_F6) / pow(2,b) * 100;
-    // data[6] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_630nm_F7) / pow(2,b) * 100;
 
-    data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100; // looking out for when it stops; defines point on curve
-    data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100; // regimes (defined at end state)
+    data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100;
+    data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100;
 }
 
 void analyze(float* data){
@@ -114,7 +106,7 @@ void analyze(float* data){
         return;
     }
     float_pair red_values = analyze_number(data[0]);
-    float_pair clear_values = analyze_number(data[1]);
+    // float_pair clear_values = analyze_number(data[1]);
 
     // TODO: USE BOTH RED AND CLEAR VALUES AND DETECT CHANGE
     // detect if done
@@ -155,7 +147,7 @@ void calcMotorRuntime(){
 
 void moveCar(){
     //Serial.println("TIME LEFT: " + String(millis() - car.time_car_move - car.time_to_run));
-    if (car.time_car_move == -1){
+    if (car.time_car_move == -1) {
         car.time_car_move = millis();
         digitalWrite(RELAY_PIN, HIGH);
     }
