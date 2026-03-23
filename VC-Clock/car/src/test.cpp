@@ -128,7 +128,6 @@ void calcDistance(){
     if (reaction.reaction_value < 3.5){
         distance += 15;
     }
-    distance = 19.9;
 
 
     car.time_to_run = distance * 100 / SPEED;
@@ -186,16 +185,16 @@ void loop(){
 
     waitForValveOpen();
 
-    // if (car.time_valve_open == -1){
-    //     return;
-    // }
+    if (car.time_valve_open == -1){
+        return;
+    }
 
-    // float data[8];
-    // collectData((float*)&data);
+    float data[8];
+    collectData((float*)&data);
 
 
     //MEASUREDATA
-    // analyze(data);
+    analyze(data);
 
     if (!car.reaction_done){
         return;

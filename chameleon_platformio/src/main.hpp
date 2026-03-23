@@ -3,19 +3,20 @@
 #include <Filter.cpp>
 #include <Adafruit_AS7341.h>
 
-#define VALVE_PIN_IN A3
+#define VALVE_PIN_IN A0
 #define VALVE_PIN_INPUT_LIMIT 500
 #define RELAY_PIN 6
 
 
-#define DT 100
-#define WINDOW_SIZE 5
+#define DT 250
+#define WINDOW_SIZE 15
 #define VALUE_GAIN 100
-#define SLOPE_GRACE_PERIOD 3000
-#define SLOPE_TRIGGER_VALUE 1
+#define SLOPE_GRACE_PERIOD 15000
+#define SLOPE_TRIGGER_VALUE 250
 
-#define CURVE_A -.15
-#define CURVE_B 24.75
+#define SPEED 0.15
+#define CURVE_A -.25
+#define CURVE_B 33.75
 
 struct Car {
     float time_valve_open;
@@ -29,6 +30,7 @@ struct Car {
 
 struct ReactionOut {
     float time_reaction_end;
+    float init_reaction_value;
     float reaction_value;
 };
 

@@ -21,8 +21,8 @@ void setup(){
             delay(10);
         }
     }
-    Color_Sensor.setATIME(30);
-    Color_Sensor.setASTEP(200);
+    Color_Sensor.setATIME(29);
+    Color_Sensor.setASTEP(599);
     // Color_Sensor.setASTEP((dt/2.78e-6 - 1)*1000);
     Color_Sensor.setGain(AS7341_GAIN_256X);
     Serial.println("Program Started");
@@ -38,15 +38,15 @@ void loop(){
     }
 
     waitForValveOpen();
-
+    
     if (car.time_valve_open == -1){
         return;
     }
-
+    
     float data[2];
+    
     collectData((float*)&data);
-
-
+    
     // MEASUREDATA
     analyze(data);
 
@@ -55,7 +55,6 @@ void loop(){
     }
     
     calcMotorRuntime();
-    
     moveCar();
 }
 
@@ -87,8 +86,9 @@ void waitForValveOpen(){
     }
 
     car.time_valve_open = millis();
-    car.reaction_done = true;
-    
+    float data[2];
+    collectData(data);
+    reaction.init_reaction_value = data[0];
 }
 
 void collectData(float* data){
@@ -96,12 +96,11 @@ void collectData(float* data){
         return;
     }
     int b = 16;
-
     data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100;
     data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100;
 }
 
-void analyze(float* data){
+void analyze(float* data) { 
     if (car.reaction_done){
         return;
     }
@@ -110,7 +109,8 @@ void analyze(float* data){
 
     // TODO: USE BOTH RED AND CLEAR VALUES AND DETECT CHANGE
     // detect if done
-    if ((millis() - car.time_valve_open) > SLOPE_GRACE_PERIOD && abs(red_values.second) < SLOPE_TRIGGER_VALUE){
+
+    if ((millis() - car.time_valve_open) > SLOPE_GRACE_PERIOD && abs(red_values.first - reaction.init_reaction_value) > SLOPE_TRIGGER_VALUE){
         reaction.time_reaction_end = millis() - car.time_valve_open;
         car.reaction_done = true;
         reaction.reaction_value = red_values.first;
@@ -128,7 +128,7 @@ float_pair analyze_number(float num) {
     Serial.println("DATA: " + String(time, 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value));
 
     float_pair avg_values;
-    avg_values.first = avg_value;
+    avg_values.first = value;
     avg_values.second = avg_delta_value;
     return avg_values;
 }
@@ -138,9 +138,16 @@ void calcMotorRuntime(){
         return;
     }
 
-    car.time_to_run = CURVE_A * car.reaction_done + CURVE_B;
+    float distance = CURVE_A * car.reaction_done + CURVE_B;
+    car.time_to_run = distance * 100 / SPEED;
+    Serial.println("Calculated Distance: " + String(distance));
+    Serial.println("TIMETORUN: " + String(car.time_to_run));
+    car.calculated_distance_bool = true;
+
+   // car.time_to_run = CURVE_A * car.reaction_done + CURVE_B;
 
     Serial.println("Calculated runtime: " + String(car.time_to_run));
+    Serial.println("time car move" + String(car.time_car_move));
     Serial.println("TIMETORUN: " + String(car.time_to_run));
     car.calculated_distance_bool = true;
 }
@@ -149,12 +156,16 @@ void moveCar(){
     //Serial.println("TIME LEFT: " + String(millis() - car.time_car_move - car.time_to_run));
     if (car.time_car_move == -1) {
         car.time_car_move = millis();
+        //Serial.println("new time car move " + String(car.time_car_move));
         digitalWrite(RELAY_PIN, HIGH);
     }
+    Serial.println("difference: " + String(millis() - car.time_car_move - car.time_to_run));
 
-    if (millis() - car.time_car_move - car.time_to_run >= 0){
+    if (millis() - car.time_car_move - car.time_to_run  >= 0){
+        Serial.println("MILILIW " + String(millis()));
         digitalWrite(RELAY_PIN, LOW);
         Serial.println("DONE MOVING CAR");
+        delay(1000);
         exit(0);
     }
 
