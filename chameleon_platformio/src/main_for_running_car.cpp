@@ -12,7 +12,7 @@
 
 //     car.time_car_move = -1;
 //     Serial.println("Program Started");
-//     delay(5000); // testing speed
+//     delay(2000); // testing speed
 
 // }
 
