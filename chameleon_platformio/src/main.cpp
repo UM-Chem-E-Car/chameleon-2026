@@ -159,10 +159,12 @@ void moveCar(){
         //Serial.println("new time car move " + String(car.time_car_move));
         digitalWrite(RELAY_PIN, HIGH);
     }
-    Serial.println("difference: " + String(millis() - car.time_car_move - car.time_to_run));
+    double red_value = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,16) * 100;
+    double value = VALUE_GAIN * red_value;
+    Serial.println("color value " + String(value) + " difference: " + String(millis() - car.time_car_move - car.time_to_run));
 
     if (millis() - car.time_car_move - car.time_to_run  >= 0){
-        Serial.println("MILILIW " + String(millis()));
+        Serial.println("MILLIS " + String(millis()));
         digitalWrite(RELAY_PIN, LOW);
         Serial.println("DONE MOVING CAR");
         delay(1000);
