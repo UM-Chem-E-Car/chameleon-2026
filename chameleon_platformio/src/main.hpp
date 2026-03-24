@@ -2,6 +2,7 @@
 #include <SoftwareSerial.h>
 #include <Filter.cpp>
 #include <Adafruit_AS7341.h>
+#include <Sensor.cpp>
 
 #define VALVE_PIN_IN A0
 #define VALVE_PIN_INPUT_LIMIT 500

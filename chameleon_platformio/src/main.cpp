@@ -31,6 +31,11 @@
 
 // void loop(){
 
+//     Serial.println("RUNNING CAR");
+//     digitalWrite(RELAY_PIN, HIGH);
+//     return;
+//     //REPLACE
+
 //     delay(DT);
 //     if (!Color_Sensor.readAllChannels()){
 //         Serial.println("Cannot Read Channels");

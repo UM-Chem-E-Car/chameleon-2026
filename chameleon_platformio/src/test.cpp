@@ -14,11 +14,11 @@ void setup(){
 }
 
 void loop(){
+    sensor.gatherData();
 
-    Serial.println("Hello");
 
-    if(sensor.read()){
-        // read() already prints timestamp
+    if(sensor.ready_to_read){
+        Serial.println(sensor.getReadings().toString());
     }
 
 }
