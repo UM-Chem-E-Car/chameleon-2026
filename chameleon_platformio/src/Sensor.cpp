@@ -3,6 +3,7 @@
 
 class Color_Sensor {
 public:
+    Color_Sensor(): ready_to_read(false), sensor(), readings() {}
 
     struct Data {
         double v,b,c,g,gy,y,o,r;
@@ -47,8 +48,6 @@ public:
             return !(*this == other);
         }
     };
-
-    Color_Sensor(): sensor(), readings(), ready_to_read(false) {}
 
     bool init(int ATIME, int ASTEP){
 
@@ -105,17 +104,11 @@ public:
         return readings;
     }
 
-    static const Data invalid;
+    const Data invalid{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN};
 
     bool ready_to_read;
 
 private:
-
     Adafruit_AS7341 sensor;
     Data readings;
-
-};
-
-const Color_Sensor::Data Color_Sensor::invalid{
-    NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN
 };
