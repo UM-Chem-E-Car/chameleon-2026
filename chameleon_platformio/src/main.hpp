@@ -12,8 +12,8 @@
 #define DT 250
 #define WINDOW_SIZE 3
 #define VALUE_GAIN 100
-#define SLOPE_GRACE_PERIOD 5000
-#define TRIGGER_VALUE 0.02
+#define SLOPE_GRACE_PERIOD 10000
+#define TRIGGER_VALUE 0.001
 
 
 //15-75
@@ -26,11 +26,8 @@ struct Car {
         WAITING_FOR_VALVE_OPEN, RECORDING_DATA, CALCULATING_DISTANCE, MOVING_CAR, PROGRAM_DONE
     };
 
-
-
     Stage stage;
-    
-    
+       
     float time_valve_open;
     float time_to_run;
     float time_car_move;

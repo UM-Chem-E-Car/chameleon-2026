@@ -45,8 +45,6 @@ void loop(){
         Color_Sensor::Data data = sensor.getReadings();
 
 
-    
-
         //ANALYSE DATA
 
 
@@ -61,7 +59,6 @@ void loop(){
         //PRINTING DATA
         //Serial.println("TIME: " + String(millis() - car.time_valve_open) + " " + data.tostring());
         Serial.println("DATA: " + String(time, 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value, 6));
-
         
         
         //MY CODE
@@ -81,8 +78,6 @@ void loop(){
         }
 
     }
-
-
 
 
     if (car.stage == Car::Stage::CALCULATING_DISTANCE){
@@ -193,7 +188,7 @@ void moveCar(){
     if (millis() < car.time_car_move + car.time_to_run){
         digitalWrite(RELAY_PIN, HIGH);
     } else {
-        digitalWrite(RELAY_PIN, LOW);
+        // digitalWrite(RELAY_PIN, LOW);
         Serial.println("Done Moving Car");
         car.stage = Car::Stage::PROGRAM_DONE;
         // delay(100);
