@@ -193,7 +193,7 @@ void moveCar(){
     if (millis() < car.time_car_move + car.time_to_run){
         digitalWrite(RELAY_PIN, HIGH);
     } else {
-        // digitalWrite(RELAY_PIN, LOW);
+        digitalWrite(RELAY_PIN, LOW);
         Serial.println("Done Moving Car");
         car.stage = Car::Stage::PROGRAM_DONE;
         // delay(100);
