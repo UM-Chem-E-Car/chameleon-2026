@@ -34,48 +34,74 @@ void loop(){
 
     waitForValveOpen();
     
-    if (car.time_valve_open == -1){
+    if (car.stage == Car::Stage::WAITING_FOR_VALVE_OPEN){
         return;
     }
     
     
-    if (!sensor.ready_to_read){
-        return;
-    }
+    if (/*car.stage == Car::Stage::RECORDING_DATA &&*/ sensor.ready_to_read){
+
+        //MEASURING DATA
+        Color_Sensor::Data data = sensor.getReadings();
+
+
     
-    Color_Sensor::Data data = sensor.getReadings();
+
+        //ANALYSE DATA
+
+
+        double time = millis();
+        //PLACE VARIABLE HERE
+        double value = data.r/data.o;
+        double avg_value = valueFilter.average(value);
+        double delta_value = derivative.change(value);
+        double avg_delta_value = derFilter.average(delta_value);
+
+
+        //PRINTING DATA
+        //Serial.println("TIME: " + String(millis() - car.time_valve_open) + " " + data.tostring());
+        Serial.println("DATA: " + String(time, 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value, 6));
+
+        
+        
+        //MY CODE
+        if (true){
+            if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && avg_delta_value < TRIGGER_VALUE){
+                Serial.println("RXN DONE");
+                car.stage = Car::Stage::CALCULATING_DISTANCE;
+                reaction.time_reaction_end = car.currentTime();
+                reaction.reaction_value = avg_delta_value;
+            }
+
+        }
+        //JUSTIN CODE
+        else{
+
+
+        }
+
+    }
 
 
 
-    //TEMP SHIT TO TEST IF READING WORKS
-    Serial.println("TIME: " + String(millis() - car.time_valve_open) + " " + data.toString());
 
-    if (SLOPE_GRACE_PERIOD < millis() - car.time_valve_open && !car.reaction_done){
-        Serial.println("INIT VALUE: " + String(reaction.init_reaction_value) + " Final: " + String(data.r) + " TIME: " + String(millis() - car.time_valve_open));
-        Serial.println("DIFF " + String(data.r - reaction.init_reaction_value));
+    if (car.stage == Car::Stage::CALCULATING_DISTANCE){
         calcMotorRuntime();
     }
-
-    return;
-
-    // MEASUREDATA
-    // analyze(data);
-
-    if (!car.reaction_done){
-        return;
+    
+    
+    if (car.stage == Car::Stage::MOVING_CAR){
+        moveCar();
     }
     
-    calcMotorRuntime();
-    moveCar();
 }
 
 // inits car and reaction time variables; makes sure relay is off
 void init_variables(){
     car.time_valve_open = -1;
-    car.reaction_done = false;
+    car.stage = Car::Stage::WAITING_FOR_VALVE_OPEN;
     reaction.time_reaction_end = -1;
     car.time_to_run = -1;
-    car.calculated_distance_bool = false;
     car.time_car_move = -1;
     reaction.reaction_value = -1;
     sensor.init(29, 599);
@@ -98,7 +124,7 @@ void waitForValveOpen(){
     }
 
     car.time_valve_open = millis();
-    
+    car.stage = Car::Stage::RECORDING_DATA;
     Serial.println("VALVE IS ON");
     sensor.gatherData();
     if (sensor.ready_to_read){
@@ -117,16 +143,16 @@ void waitForValveOpen(){
 // }
 
 void analyze(const Color_Sensor::Data &data) { 
-    if (car.reaction_done){
-        return;
-    }
+    // if (car.reaction_done){
+    //     return;
+    // }
     //float_pair red_values = analyze_number(data[0]);
     // float_pair clear_values = analyze_number(data[1]);
 
     // TODO: USE BOTH RED AND CLEAR VALUES AND DETECT CHANGE
     // detect if done
 
-    // if ((millis() - car.time_valve_open) > SLOPE_GRACE_PERIOD && abs(red_values.first - reaction.init_reaction_value) > SLOPE_TRIGGER_VALUE){
+    // if ((millis() - car.time_valve_open) > SLOPE_GRACE_PERIOD && abs(red_values.first - reaction.init_reaction_value) > TRIGGER_VALUE){
     //     reaction.time_reaction_end = millis() - car.time_valve_open;
     //     car.reaction_done = true;
     //     reaction.reaction_value = red_values.first;
@@ -134,59 +160,44 @@ void analyze(const Color_Sensor::Data &data) {
     // }
 }
 
-float_pair analyze_number(float num) {
-    double time = millis();
-    double value = VALUE_GAIN * num;
-    double avg_value = valueFilter.average(value);
-    double delta_value = derivative.change(value);
-    double avg_delta_value = derFilter.average(delta_value);
+// float_pair analyze_number(float num) {
+//     double time = millis();
+//     double value = VALUE_GAIN * num;
+//     double avg_value = valueFilter.average(value);
+//     double delta_value = derivative.change(value);
+//     double avg_delta_value = derFilter.average(delta_value);
 
-    Serial.println("DATA: " + String(time, 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value));
+//     Serial.println("DATA: " + String(time, 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value));
 
-    float_pair avg_values;
-    avg_values.first = value;
-    avg_values.second = avg_delta_value;
-    return avg_values;
-}
+//     float_pair avg_values;
+//     avg_values.first = value;
+//     avg_values.second = avg_delta_value;
+//     return avg_values;
+// }
 
 void calcMotorRuntime(){
-    car.reaction_done = true;
-    return;
-    //TEMP
 
-    if (car.calculated_distance_bool){
-        return;
-    }
-
-    float distance = CURVE_A * car.reaction_done + CURVE_B;
-    car.time_to_run = distance * 100 / SPEED;
+    float distance = CURVE_A * reaction.time_reaction_end + CURVE_B;
+    car.time_to_run = (distance / SPEED)*1000;
+    car.time_car_move = millis();
     Serial.println("Calculated Distance: " + String(distance));
     Serial.println("TIMETORUN: " + String(car.time_to_run));
-    car.calculated_distance_bool = true;
+    car.stage = Car::Stage::MOVING_CAR;
 
-   // car.time_to_run = CURVE_A * car.reaction_done + CURVE_B;
 
-    Serial.println("Calculated runtime: " + String(car.time_to_run));
-    Serial.println("time car move" + String(car.time_car_move));
-    Serial.println("TIMETORUN: " + String(car.time_to_run));
-    car.calculated_distance_bool = true;
 }
 
 void moveCar(){
-    //Serial.println("TIME LEFT: " + String(millis() - car.time_car_move - car.time_to_run));
-    if (car.time_car_move == -1) {
-        car.time_car_move = millis();
-        //Serial.println("new time car move " + String(car.time_car_move));
-        digitalWrite(RELAY_PIN, HIGH);
-    }
-    Serial.println("difference: " + String(millis() - car.time_car_move - car.time_to_run));
+    //Serial.println("TIME LEFT: " + String((car.time_car_move + car.time_to_run - millis())/1000));
 
-    if (millis() - car.time_car_move - car.time_to_run  >= 0){
-        Serial.println("MILILIW " + String(millis()));
+    if (millis() < car.time_car_move + car.time_to_run){
+        digitalWrite(RELAY_PIN, HIGH);
+    } else {
         digitalWrite(RELAY_PIN, LOW);
-        Serial.println("DONE MOVING CAR");
-        delay(1000);
-        exit(0);
+        Serial.println("Done Moving Car");
+        car.stage = Car::Stage::PROGRAM_DONE;
+        // delay(100);
+        // exit(0);
     }
 
 }
