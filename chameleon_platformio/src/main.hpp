@@ -10,23 +10,40 @@
 
 
 #define DT 250
-#define WINDOW_SIZE 15
+#define WINDOW_SIZE 3
 #define VALUE_GAIN 100
-#define SLOPE_GRACE_PERIOD 45000
-#define SLOPE_TRIGGER_VALUE 400
+#define SLOPE_GRACE_PERIOD 5000
+#define TRIGGER_VALUE 0.02
 
-#define SPEED 0.15
-#define CURVE_A -.25
+
+//15-75
+#define SPEED 0.416
+#define CURVE_A -0.00025
 #define CURVE_B 33.75
 
 struct Car {
-    float time_valve_open;
-    bool reaction_done;
-    bool calculated_distance_bool;
-    
-    float time_to_run;
+    enum Stage{
+        WAITING_FOR_VALVE_OPEN, RECORDING_DATA, CALCULATING_DISTANCE, MOVING_CAR, PROGRAM_DONE
+    };
 
+
+
+    Stage stage;
+    
+    
+    float time_valve_open;
+    float time_to_run;
     float time_car_move;
+
+    float currentTime(){
+        return millis() - time_valve_open;
+    }
+
+    float timeLeftToRun(){
+        return millis() - time_to_run;
+    }
+
+
 };
 
 struct ReactionOut {
