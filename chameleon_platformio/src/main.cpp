@@ -64,12 +64,16 @@ void loop(){
         //MY CODE
         if (true){
             if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && avg_delta_value < TRIGGER_VALUE){
-                Serial.println("RXN DONE");
-                car.stage = Car::Stage::CALCULATING_DISTANCE;
-                reaction.time_reaction_end = car.currentTime();
-                reaction.reaction_value = avg_delta_value;
+                if (!car.first_delta_hit) {
+                    Serial.println("FIRST DELTA HIT");
+                    car.first_delta_hit = true;
+                } else {
+                    Serial.println("RXN DONE");
+                    car.stage = Car::Stage::CALCULATING_DISTANCE;
+                    reaction.time_reaction_end = car.currentTime();
+                    reaction.reaction_value = avg_delta_value;
+                }
             }
-
         }
         //JUSTIN CODE
         else{
@@ -99,6 +103,7 @@ void init_variables(){
     car.time_to_run = -1;
     car.time_car_move = -1;
     reaction.reaction_value = -1;
+    car.first_delta_hit = false;
     sensor.init(29, 599);
 
     digitalWrite(RELAY_PIN, LOW);

@@ -13,7 +13,7 @@
 #define WINDOW_SIZE 3
 #define VALUE_GAIN 100
 #define SLOPE_GRACE_PERIOD 10000
-#define TRIGGER_VALUE 0.001
+#define TRIGGER_VALUE 0.0005
 
 
 //15-75
@@ -31,6 +31,8 @@ struct Car {
     float time_valve_open;
     float time_to_run;
     float time_car_move;
+
+    bool first_delta_hit;
 
     float currentTime(){
         return millis() - time_valve_open;
