@@ -4,6 +4,10 @@
 ReactionOut reaction;
 Filter valueFilter(WINDOW_SIZE);
 Filter derFilter(WINDOW_SIZE);
+
+RunningMedian valueMedian;
+RunningMedian derMedian;
+
 DDx derivative(DT);
 Color_Sensor sensor;
 Car car;
@@ -51,9 +55,12 @@ void loop(){
         double time = millis();
         //PLACE VARIABLE HERE
         double value = data.r/data.o;
-        double avg_value = valueFilter.average(value);
+        valueMedian.add(value);
+        double avg_value = valueMedian.median(); //valueFilter.average(value);
         double delta_value = derivative.change(value);
-        double avg_delta_value = derFilter.average(delta_value);
+
+        derMedian.add(value);
+        double avg_delta_value = derMedian.median();//derFilter.average(delta_value);
 
 
         //PRINTING DATA
@@ -178,7 +185,7 @@ void analyze(const Color_Sensor::Data &data) {
 void calcMotorRuntime(){
 
     float distance = CURVE_A * reaction.time_reaction_end + CURVE_B;
-    car.time_to_run = (distance / SPEED)*1000;
+    car.time_to_run =///FUNCITON   (A * (distance) + B)*1000  (distance / SPEED)*1000;
     car.time_car_move = millis();
     Serial.println("Calculated Distance: " + String(distance));
     Serial.println("TIMETORUN: " + String(car.time_to_run));
