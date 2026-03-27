@@ -53,13 +53,13 @@ void loop(){
 
 
         double time = millis();
-        //PLACE VARIABLE HERE
+        //PLACE VARIABLE HERE`
         double value = data.r/data.o;
         valueMedian.add(value);
         double avg_value = valueMedian.median(); //valueFilter.average(value);
         double delta_value = derivative.change(value);
 
-        derMedian.add(value);
+        derMedian.add(delta_value);
         double avg_delta_value = derMedian.median();//derFilter.average(delta_value);
 
 

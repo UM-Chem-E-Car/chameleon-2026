@@ -55,12 +55,12 @@ class DDx{
 
 class RunningMedian {
 private:
-    int arr[1000];
+    float arr[700];
     int size = 0;
 
 public:
 
-    void add(int n) {
+    void add(float n) {
 
         int i = size - 1;
 
@@ -74,7 +74,7 @@ public:
         size++;
     }
 
-    double median() {
+    float median() {
 
         if (size % 2 == 1)
             return arr[size / 2];
