@@ -17,9 +17,10 @@
 
 
 //15-75
-#define SPEED 0.416
-#define CURVE_A -0.000333333
-#define CURVE_B 35
+#define CAR_A 0.5657
+#define CAR_B 0.000007
+#define CURVE_A -0.000375
+#define CURVE_B 37.5
 
 struct Car {
     enum Stage{

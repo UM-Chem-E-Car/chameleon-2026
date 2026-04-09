@@ -19,17 +19,12 @@ void setup(){
     pinMode(RELAY_PIN, OUTPUT);
     pinMode(VALVE_PIN_IN, INPUT);     
 
-
-    // Color_Sensor.setASTEP((dt/2.78e-6 - 1)*1000);
     Serial.println("Program Started");
 
 }
 
 void loop(){
 
-    // Serial.println("RUNNING CAR");
-    // digitalWrite(RELAY_PIN, HIGH);
-    // return;
     // //REPLACE
 
     sensor.gatherData();
@@ -56,21 +51,21 @@ void loop(){
         //PLACE VARIABLE HERE`
         double value = data.r/data.o;
         valueMedian.add(value);
-        double avg_value = valueMedian.median(); //valueFilter.average(value);
+        double avg_value = valueFilter.average(value);
         double delta_value = derivative.change(value);
 
         derMedian.add(delta_value);
-        double avg_delta_value = derMedian.median();//derFilter.average(delta_value);
+        double avg_delta_value = derFilter.average(delta_value);
 
 
         //PRINTING DATA
         //Serial.println("TIME: " + String(millis() - car.time_valve_open) + " " + data.tostring());
-        Serial.println("DATA: " + String(time, 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value, 6));
+        Serial.println("DATA: " + String(car.currentTime(), 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value, 6));
         
         
         //MY CODE
         if (true){
-            if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && avg_delta_value < TRIGGER_VALUE){
+            if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && abs(avg_delta_value) < TRIGGER_VALUE){
                 if (!car.first_delta_hit) {
                     Serial.println("FIRST DELTA HIT");
                     car.first_delta_hit = true;
@@ -184,10 +179,10 @@ void analyze(const Color_Sensor::Data &data) {
 
 void calcMotorRuntime(){
 
-    float distance = CURVE_A * reaction.time_reaction_end + CURVE_B;
-    car.time_to_run =///FUNCITON   (A * (distance) + B)*1000  (distance / SPEED)*1000;
+    float estimated_distance = CURVE_A * reaction.time_reaction_end + CURVE_B;
+    car.time_to_run = (estimated_distance / CAR_A + CAR_B)*1000;
     car.time_car_move = millis();
-    Serial.println("Calculated Distance: " + String(distance));
+    Serial.println("Calculated Distance: " + String(estimated_distance));
     Serial.println("TIMETORUN: " + String(car.time_to_run));
     car.stage = Car::Stage::MOVING_CAR;
 

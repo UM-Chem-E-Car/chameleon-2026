@@ -1,7 +1,11 @@
 class Filter{
   public:
     Filter(int WINDOW_SIZE) 
-            : WS(WINDOW_SIZE), index(1), data(new float[WINDOW_SIZE]){}
+            : WS(WINDOW_SIZE), index(1), data(new float[WINDOW_SIZE]){
+              for (int i = 0; i < WINDOW_SIZE; i++){
+                data[i] = 0;
+              }
+            }
 
     float average(float input) {
       int windex = index % WS;
@@ -55,30 +59,54 @@ class DDx{
 
 class RunningMedian {
 private:
-    float arr[700];
+    static const int MAX = 5;
+
+    double buffer[MAX];   // circular buffer
+    double sorted[MAX];   // sorted copy
+
     int size = 0;
+    int head = 0;
 
 public:
 
-    void add(float n) {
+    void add(double n) {
+
+        // remove oldest if full
+        if (size == MAX) {
+
+            double old = buffer[head];
+
+            int i = 0;
+            while (sorted[i] != old) i++;
+
+            for (; i < size - 1; i++)
+                sorted[i] = sorted[i + 1];
+
+            size--;
+        }
+
+        buffer[head] = n;
+        head = (head + 1) % MAX;
 
         int i = size - 1;
 
-        // shift elements right
-        while (i >= 0 && arr[i] > n) {
-            arr[i + 1] = arr[i];
+        while (i >= 0 && sorted[i] > n) {
+            sorted[i + 1] = sorted[i];
             i--;
         }
 
-        arr[i + 1] = n;
+        sorted[i + 1] = n;
         size++;
     }
 
-    float median() {
+    double median() {
 
-        if (size % 2 == 1)
-            return arr[size / 2];
+        if (size == 0)
+            return 0;
 
-        return (arr[size/2 - 1] + arr[size/2]) / 2.0;
+        if (size % 2)
+            return sorted[size/2];
+
+        return (sorted[size/2 - 1] + sorted[size/2]) / 2.0;
     }
 };
