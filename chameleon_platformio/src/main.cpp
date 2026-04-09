@@ -37,8 +37,13 @@ void loop(){
         return;
     }
     
+    if (car.status == Car::Status::BEFORE_RUN) {
+        if (car.currentTime() > 10000) {
+            car.status = Car::Status::RUN_BEFORE_RXN;
+        }
+    }
     
-    if (/*car.stage == Car::Stage::RECORDING_DATA &&*/ sensor.ready_to_read){
+    if (sensor.ready_to_read){
 
         //MEASURING DATA
         Color_Sensor::Data data = sensor.getReadings();
@@ -46,9 +51,8 @@ void loop(){
 
         //ANALYSE DATA
 
-
         double time = millis();
-        //PLACE VARIABLE HERE`
+        //PLACE VARIABLE HERE
         double value = data.r/data.o;
         valueMedian.add(value);
         double avg_value = valueFilter.average(value);
@@ -64,25 +68,17 @@ void loop(){
         
         
         //MY CODE
-        if (true){
-            if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && abs(avg_delta_value) < TRIGGER_VALUE){
-                if (!car.first_delta_hit) {
-                    Serial.println("FIRST DELTA HIT");
-                    car.first_delta_hit = true;
-                } else {
-                    Serial.println("RXN DONE");
-                    car.stage = Car::Stage::CALCULATING_DISTANCE;
-                    reaction.time_reaction_end = car.currentTime();
-                    reaction.reaction_value = avg_delta_value;
-                }
+        if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && abs(avg_delta_value) < TRIGGER_VALUE){
+            if (!car.first_delta_hit) {
+                Serial.println("FIRST DELTA HIT");
+                car.first_delta_hit = true;
+            } else {
+                Serial.println("RXN DONE");
+                car.stage = Car::Stage::CALCULATING_DISTANCE;
+                reaction.time_reaction_end = car.currentTime();
+                reaction.reaction_value = avg_delta_value;
             }
         }
-        //JUSTIN CODE
-        else{
-
-
-        }
-
     }
 
 
@@ -91,8 +87,9 @@ void loop(){
     }
     
     
-    if (car.stage == Car::Stage::MOVING_CAR){
-        moveCar();
+    if (car.status == Car::Status::RUN_BEFORE_RXN){
+        moveCarBeforeRXN(); // currently just digitalWrite(RELAY_PIN, HIGH);
+        // car.status = Car::Status::RUN_AFTER_RXN;
     }
     
 }
@@ -101,6 +98,7 @@ void loop(){
 void init_variables(){
     car.time_valve_open = -1;
     car.stage = Car::Stage::WAITING_FOR_VALVE_OPEN;
+    car.status = Car::Status::BEFORE_RUN;
     reaction.time_reaction_end = -1;
     car.time_to_run = -1;
     car.time_car_move = -1;
@@ -186,7 +184,10 @@ void calcMotorRuntime(){
     Serial.println("TIMETORUN: " + String(car.time_to_run));
     car.stage = Car::Stage::MOVING_CAR;
 
+}
 
+void moveCarBeforeRXN() {
+    digitalWrite(RELAY_PIN, HIGH);
 }
 
 void moveCar(){
@@ -198,6 +199,7 @@ void moveCar(){
         digitalWrite(RELAY_PIN, LOW);
         Serial.println("Done Moving Car");
         car.stage = Car::Stage::PROGRAM_DONE;
+        car.status = Car::Status::AFTER_RUN;
         // delay(100);
         // exit(0);
     }
