@@ -27,8 +27,13 @@ struct Car {
         WAITING_FOR_VALVE_OPEN, RECORDING_DATA, CALCULATING_DISTANCE, MOVING_CAR, PROGRAM_DONE
     };
 
+    enum Status{
+        BEFORE_RUN, RUN_BEFORE_RXN, RUN_AFTER_RXN, AFTER_RUN
+    };
+
     Stage stage;
-       
+    Status status;
+    
     float time_valve_open;
     float time_to_run;
     float time_car_move;
@@ -42,8 +47,6 @@ struct Car {
     float timeLeftToRun(){
         return millis() - time_to_run;
     }
-
-
 };
 
 struct ReactionOut {
