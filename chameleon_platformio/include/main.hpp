@@ -4,16 +4,16 @@
 #include <Adafruit_AS7341.h>
 #include <Sensor.cpp>
 
-#define VALVE_PIN_IN A0
+int VALVE_PIN_IN = A2;
 #define VALVE_PIN_INPUT_LIMIT 500
 #define RELAY_PIN 6
 
 
-#define DT 250
-#define WINDOW_SIZE 3
+#define DT 1
+#define WINDOW_SIZE 65
 #define VALUE_GAIN 100
 #define SLOPE_GRACE_PERIOD 10000
-#define TRIGGER_VALUE 0.0005
+#define TRIGGER_VALUE .001737
 
 
 //15-75
@@ -67,3 +67,4 @@ float_pair analyze_number(float num);
 void waitForValveOpen();
 void calcMotorRuntime();
 void moveCar();
+void printData(double args[], size_t size);

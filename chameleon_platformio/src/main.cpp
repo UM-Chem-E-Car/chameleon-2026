@@ -9,7 +9,7 @@ RunningMedian valueMedian;
 RunningMedian derMedian;
 
 DDx derivative(DT);
-Color_Sensor sensor;
+Color_Sensor sensor(25, 99, 10000);
 Car car;
 // -----------------------
 
@@ -28,7 +28,7 @@ void loop(){
     // //REPLACE
 
     sensor.gatherData();
-    delay(DT);
+
 
 
     waitForValveOpen();
@@ -54,17 +54,21 @@ void loop(){
         double time = millis();
         //PLACE VARIABLE HERE
         double value = data.r/data.o;
-        valueMedian.add(value);
+        //valueMedian.add(value);
         double avg_value = valueFilter.average(value);
         double delta_value = derivative.change(value);
 
-        derMedian.add(delta_value);
+        //derMedian.add(delta_value);
         double avg_delta_value = derFilter.average(delta_value);
 
 
         //PRINTING DATA
         //Serial.println("TIME: " + String(millis() - car.time_valve_open) + " " + data.tostring());
-        Serial.println("DATA: " + String(car.currentTime(), 3) + " Value: " + String(value, 4) + " Average Value: " + String(avg_value, 4) + " Delta: " + String(delta_value, 4) + " Average Delta: " + String(avg_delta_value, 6));
+        
+        double printarr[] = {millis() - car.time_valve_open, data.v, data.b, data.c, data.g, data.gy, data.y, data.o, data.r, data.cl, data.nir, value, avg_value, delta_value, avg_delta_value};
+        printData(printarr, 16);
+
+        //Serial.println(String(car.currentTime(), 3) + ", " + String(value, 4) + ", " + String(avg_value, 4) + ", " + String(delta_value, 4) + ", " + String(avg_delta_value, 6));
         
         
         //MY CODE
@@ -88,7 +92,7 @@ void loop(){
     
     
     if (car.status == Car::Status::RUN_BEFORE_RXN){
-        moveCarBeforeRXN(); // currently just digitalWrite(RELAY_PIN, HIGH);
+        //moveCarBeforeRXN(); // currently just digitalWrite(RELAY_PIN, HIGH);
         // car.status = Car::Status::RUN_AFTER_RXN;
     }
     
@@ -104,7 +108,8 @@ void init_variables(){
     car.time_car_move = -1;
     reaction.reaction_value = -1;
     car.first_delta_hit = false;
-    sensor.init(29, 599);
+    sensor.init();
+
 
     digitalWrite(RELAY_PIN, LOW);
 }
@@ -127,6 +132,10 @@ void waitForValveOpen(){
     car.stage = Car::Stage::RECORDING_DATA;
     Serial.println("VALVE IS ON");
     sensor.gatherData();
+
+    Serial.println("Integration Time: " + String(sensor.getIntegrationTimeInMiliseconds()));
+    Serial.println("Time, v, b, c, g, gy, y, o, r, cl, nir, Value, Average Value, Delta, Average Delta");
+
     if (sensor.ready_to_read){
         reaction.init_reaction_value = sensor.getReadings().r;
     }
@@ -141,6 +150,16 @@ void waitForValveOpen(){
 //     data[0] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_680nm_F8) / pow(2,b) * 100;
 //     data[1] = (double) Color_Sensor.getChannel(AS7341_CHANNEL_CLEAR) / pow(2,b) * 100;
 // }
+
+void printData(double args[], size_t size){
+    String e = "";
+    for (size_t x = 0; x < size-1; x++){
+        e += String(args[x], 6) + ", ";
+    }
+    e += String(args[size-1], 6);
+    Serial.println(e);
+}
+
 
 void analyze(const Color_Sensor::Data &data) { 
     // if (car.reaction_done){

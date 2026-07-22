@@ -77,16 +77,16 @@ public:
             return;
         }
 
-        ret.v  = sensor.getChannel(AS7341_CHANNEL_415nm_F1) / 65536.0 * 100;
-        ret.b  = sensor.getChannel(AS7341_CHANNEL_445nm_F2) / 65536.0 * 100;
-        ret.c  = sensor.getChannel(AS7341_CHANNEL_480nm_F3) / 65536.0 * 100;
-        ret.g  = sensor.getChannel(AS7341_CHANNEL_515nm_F4) / 65536.0 * 100;
-        ret.gy = sensor.getChannel(AS7341_CHANNEL_555nm_F5) / 65536.0 * 100;
-        ret.y  = sensor.getChannel(AS7341_CHANNEL_590nm_F6) / 65536.0 * 100;
-        ret.o  = sensor.getChannel(AS7341_CHANNEL_630nm_F7) / 65536.0 * 100;
-        ret.r  = sensor.getChannel(AS7341_CHANNEL_680nm_F8) / 65536.0 * 100;
-        ret.cl = sensor.getChannel(AS7341_CHANNEL_CLEAR) / 65536.0 * 100;
-        ret.nir= sensor.getChannel(AS7341_CHANNEL_NIR) / 65536.0 * 100;
+        ret.v  = sensor.getChannel(AS7341_CHANNEL_415nm_F1) / 65536.0 * 10000;
+        ret.b  = sensor.getChannel(AS7341_CHANNEL_445nm_F2) / 65536.0 * 10000;
+        ret.c  = sensor.getChannel(AS7341_CHANNEL_480nm_F3) / 65536.0 * 10000;
+        ret.g  = sensor.getChannel(AS7341_CHANNEL_515nm_F4) / 65536.0 * 10000;
+        ret.gy = sensor.getChannel(AS7341_CHANNEL_555nm_F5) / 65536.0 * 10000;
+        ret.y  = sensor.getChannel(AS7341_CHANNEL_590nm_F6) / 65536.0 * 10000;
+        ret.o  = sensor.getChannel(AS7341_CHANNEL_630nm_F7) / 65536.0 * 10000;
+        ret.r  = sensor.getChannel(AS7341_CHANNEL_680nm_F8) / 65536.0 * 10000;
+        ret.cl = sensor.getChannel(AS7341_CHANNEL_CLEAR) / 65536.0 * 10000;
+        ret.nir= sensor.getChannel(AS7341_CHANNEL_NIR) / 65536.0 * 10000;
 
         if(ret != readings){
             readings = ret;

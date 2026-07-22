@@ -1,83 +1,114 @@
-class Filter{
-  public:
-    Filter(int WINDOW_SIZE) 
-            : WS(WINDOW_SIZE), index(1), data(new float[WINDOW_SIZE]){
-              for (int i = 0; i < WINDOW_SIZE; i++){
-                data[i] = 0;
-              }
-            }
-
-    float average(float input) {
-      int windex = index % WS;
-      if (index < WS) {
-        data[windex] = input;
-        avg += input / WS;
-        float ret = (data[index - 1] + input) / index;
-        index += 1;
-        return ret;
-      } else {
-        avg += (input / WS) - (data[windex] / WS);
-        data[windex] = input;
-        index += 1;
-        return avg;
-      }
+class Filter {
+public:
+    Filter(int window)
+        : WS(window),
+          index(0),
+          count(0),
+          sum(0.0f),
+          data(new float[window])
+    {
+        for (int i = 0; i < WS; i++)
+            data[i] = 0.0f;
     }
 
+    float average(float input)
+    {
+        int windex = index % WS;
 
-    ~Filter() { delete[] data; }
+        if (count < WS)
+        {
+            // Still filling the buffer
+            data[windex] = input;
+            sum += input;
+            count++;
+        }
+        else
+        {
+            // Replace oldest sample
+            sum += input - data[windex];
+            data[windex] = input;
+        }
 
-  private:
-      int WS;
-      int index;
-      float avg;
-      float * data;
+        index++;
+
+        return sum / count;
+    }
+
+    ~Filter()
+    {
+        delete[] data;
+    }
+
+private:
+    int WS;
+    int index;
+    int count;
+    float sum;
+    float* data;
 };
 
-class DDx{
-  public:
-    DDx(float dxn) : dx(dxn) {}
+class DDx {
+public:
+    DDx(float dxn)
+        : dx(dxn),
+          last_value(0.0f),
+          first(true)
+    {}
 
+    float der(float new_value)
+    {
+        if (first)
+        {
+            first = false;
+            last_value = new_value;
+            return 0.0f;
+        }
 
-
-
-
-    float der(float new_value){
-       float d = (new_value - last_value)/dx;
-       last_value = new_value;
-       return d;
+        float d = (new_value - last_value) / dx;
+        last_value = new_value;
+        return d;
     }
 
-    float change(float new_value){
-      float d = last_value - new_value;
-      last_value = new_value;
-      return d;
+    float change(float new_value)
+    {
+        if (first)
+        {
+            first = false;
+            last_value = new_value;
+            return 0.0f;
+        }
+
+        float d = last_value - new_value;
+        last_value = new_value;
+        return d;
     }
-  private:
-      float dx;
-      float last_value;
+
+private:
+    float dx;
+    float last_value;
+    bool first;
 };
 
 class RunningMedian {
 private:
     static const int MAX = 5;
 
-    double buffer[MAX];   // circular buffer
-    double sorted[MAX];   // sorted copy
+    double buffer[MAX];
+    double sorted[MAX];
 
     int size = 0;
     int head = 0;
 
 public:
-
-    void add(double n) {
-
-        // remove oldest if full
-        if (size == MAX) {
-
+    void add(double n)
+    {
+        if (size == MAX)
+        {
             double old = buffer[head];
 
             int i = 0;
-            while (sorted[i] != old) i++;
+            while (i < size && sorted[i] != old)
+                i++;
 
             for (; i < size - 1; i++)
                 sorted[i] = sorted[i + 1];
@@ -89,8 +120,8 @@ public:
         head = (head + 1) % MAX;
 
         int i = size - 1;
-
-        while (i >= 0 && sorted[i] > n) {
+        while (i >= 0 && sorted[i] > n)
+        {
             sorted[i + 1] = sorted[i];
             i--;
         }
@@ -99,14 +130,14 @@ public:
         size++;
     }
 
-    double median() {
-
+    double median() const
+    {
         if (size == 0)
-            return 0;
+            return 0.0;
 
-        if (size % 2)
-            return sorted[size/2];
+        if (size % 2 == 1)
+            return sorted[size / 2];
 
-        return (sorted[size/2 - 1] + sorted[size/2]) / 2.0;
+        return (sorted[size / 2 - 1] + sorted[size / 2]) / 2.0;
     }
 };

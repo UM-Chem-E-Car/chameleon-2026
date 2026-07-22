@@ -3,7 +3,9 @@
 
 class Color_Sensor {
 public:
-    Color_Sensor(): ready_to_read(false), sensor(), readings() {}
+    Color_Sensor(int ATIME_in, int ASTEP_in): ready_to_read(false), ATIME(ATIME_in), ASTEP(ASTEP_in), sensor(), gain(10000), readings() {}
+
+    Color_Sensor(int ATIME_in, int ASTEP_in, double gain_in): ready_to_read(false), ATIME(ATIME_in), ASTEP(ASTEP_in), sensor(), gain(gain_in), readings() {}
 
     struct Data {
         double v,b,c,g,gy,y,o,r;
@@ -49,7 +51,7 @@ public:
         }
     };
 
-    bool init(int ATIME, int ASTEP){
+    bool init(){
 
         if(!sensor.begin()){
             Serial.println("AS7341 not detected");
@@ -77,16 +79,16 @@ public:
             return;
         }
 
-        ret.v  = sensor.getChannel(AS7341_CHANNEL_415nm_F1) / 65536.0 * 100;
-        ret.b  = sensor.getChannel(AS7341_CHANNEL_445nm_F2) / 65536.0 * 100;
-        ret.c  = sensor.getChannel(AS7341_CHANNEL_480nm_F3) / 65536.0 * 100;
-        ret.g  = sensor.getChannel(AS7341_CHANNEL_515nm_F4) / 65536.0 * 100;
-        ret.gy = sensor.getChannel(AS7341_CHANNEL_555nm_F5) / 65536.0 * 100;
-        ret.y  = sensor.getChannel(AS7341_CHANNEL_590nm_F6) / 65536.0 * 100;
-        ret.o  = sensor.getChannel(AS7341_CHANNEL_630nm_F7) / 65536.0 * 100;
-        ret.r  = sensor.getChannel(AS7341_CHANNEL_680nm_F8) / 65536.0 * 100;
-        ret.cl = sensor.getChannel(AS7341_CHANNEL_CLEAR) / 65536.0 * 100;
-        ret.nir= sensor.getChannel(AS7341_CHANNEL_NIR) / 65536.0 * 100;
+        ret.v  = sensor.getChannel(AS7341_CHANNEL_415nm_F1) / 65536.0 * gain;
+        ret.b  = sensor.getChannel(AS7341_CHANNEL_445nm_F2) / 65536.0 * gain;
+        ret.c  = sensor.getChannel(AS7341_CHANNEL_480nm_F3) / 65536.0 * gain;
+        ret.g  = sensor.getChannel(AS7341_CHANNEL_515nm_F4) / 65536.0 * gain;
+        ret.gy = sensor.getChannel(AS7341_CHANNEL_555nm_F5) / 65536.0 * gain;
+        ret.y  = sensor.getChannel(AS7341_CHANNEL_590nm_F6) / 65536.0 * gain;
+        ret.o  = sensor.getChannel(AS7341_CHANNEL_630nm_F7) / 65536.0 * gain;
+        ret.r  = sensor.getChannel(AS7341_CHANNEL_680nm_F8) / 65536.0 * gain;
+        ret.cl = sensor.getChannel(AS7341_CHANNEL_CLEAR) / 65536.0 * gain;
+        ret.nir= sensor.getChannel(AS7341_CHANNEL_NIR) / 65536.0 * gain;
 
         if(ret != readings){
             readings = ret;
@@ -106,9 +108,20 @@ public:
 
     const Data invalid{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN};
 
+    double getIntegrationTimeInMiliseconds() {
+        return (ATIME+1)*(ASTEP+1)*2.78/1000;
+    }
+
+
+    
     bool ready_to_read;
 
 private:
+    int ATIME;
+    int ASTEP;
     Adafruit_AS7341 sensor;
+    double gain;
     Data readings;
+
+
 };
