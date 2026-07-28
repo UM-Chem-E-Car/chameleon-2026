@@ -22,8 +22,8 @@ extension = ".csv"
 # Create and open the file
 with open(filename+str(fileNumber)+extension, "w", encoding="utf-8") as file:
     formatted_dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    file.write("------------------ Data Log: " + formatted_dt + " Run #: " + str(fileNumber) + " ------------------")
-    print("------------------ Data Log: " + formatted_dt + " Run #: " + str(fileNumber) + " ------------------")
+    # file.write("------------------ Data Log: " + formatted_dt + " Run #: " + str(fileNumber) + " ------------------")
+    # print("------------------ Data Log: " + formatted_dt + " Run #: " + str(fileNumber) + " ------------------")
     while True:
         try:
             # Read a line of data from the Arduino
@@ -33,6 +33,8 @@ with open(filename+str(fileNumber)+extension, "w", encoding="utf-8") as file:
         except KeyboardInterrupt:
             print("Data logging stopped.")
             break
+        except UnicodeDecodeError:
+            continue
 
 with open("test/persistentData.dat", "w") as persistent:
     persistent.write(str(fileNumber + 1))

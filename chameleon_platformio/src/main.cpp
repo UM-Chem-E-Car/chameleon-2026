@@ -19,7 +19,7 @@ void setup(){
     pinMode(RELAY_PIN, OUTPUT);
     pinMode(VALVE_PIN_IN, INPUT);     
 
-    Serial.println("Program Started");
+    //Serial.println("Program Started");
 
 }
 
@@ -120,7 +120,7 @@ void waitForValveOpen(){
     }
 
     if (analogRead(VALVE_PIN_IN) <= VALVE_PIN_INPUT_LIMIT) {
-        Serial.println("Waiting For Valve On");
+        //Serial.println("Waiting For Valve On");
         
     }
     delay(5);
@@ -130,10 +130,10 @@ void waitForValveOpen(){
 
     car.time_valve_open = millis();
     car.stage = Car::Stage::RECORDING_DATA;
-    Serial.println("VALVE IS ON");
+    //Serial.println("VALVE IS ON");
     sensor.gatherData();
 
-    Serial.println("Integration Time: " + String(sensor.getIntegrationTimeInMiliseconds()));
+    //Serial.println("Integration Time: " + String(sensor.getIntegrationTimeInMiliseconds()));
     Serial.println("Time, v, b, c, g, gy, y, o, r, cl, nir, Value, Average Value, Delta, Average Delta");
 
     if (sensor.ready_to_read){

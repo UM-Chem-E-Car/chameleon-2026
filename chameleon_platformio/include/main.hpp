@@ -68,3 +68,4 @@ void waitForValveOpen();
 void calcMotorRuntime();
 void moveCar();
 void printData(double args[], size_t size);
+void moveCarBeforeRXN();
