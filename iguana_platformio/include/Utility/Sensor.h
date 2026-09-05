@@ -51,6 +51,8 @@ public:
     Color_Sensor(int ATIME_in, int ASTEP_in, double gain_in);
     Color_Sensor();
 
+    void begin();
+
     void gatherData();
 
     const Data& getReadings();

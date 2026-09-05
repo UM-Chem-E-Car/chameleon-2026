@@ -1,21 +1,33 @@
-#include "Sensor.h"
+#include "Utility/Sensor.h"
 #include "ConfigVariables.h"
-#include "Logger.h"
+#include "Utility/Logger.h"
 
-Color_Sensor::Color_Sensor(int ATIME_in, int ASTEP_in) : Color_Sensor(ATIME_in, ASTEP_in, CONFIG.SENSOR.VALUE_GAIN){};
+Color_Sensor::Color_Sensor(int ATIME_in, int ASTEP_in) : Color_Sensor(ATIME_in, ASTEP_in, CONFIG::SENSOR::VALUE_GAIN){};
 
 Color_Sensor::Color_Sensor(int ATIME_in, int ASTEP_in, double gain_in): ready_to_read(false), ATIME(ATIME_in), ASTEP(ASTEP_in), sensor(), gain(gain_in), readings() {}
 
-Color_Sensor::Color_Sensor() : Color_Sensor(CONFIG.SENSOR.ATIME, CONFIG.SENSOR.ASTEP, CONFIG.SENSOR.VALUE_GAIN){}
+Color_Sensor::Color_Sensor() : Color_Sensor(CONFIG::SENSOR::ATIME, CONFIG::SENSOR::ASTEP, CONFIG::SENSOR::VALUE_GAIN){}
 
+
+void Color_Sensor::begin() {
+    sensor.begin();
+    if (false){
+            Logger::instance().log("Sensor Not Started", Logger::LogType::ERROR);
+    }
+    sensor.setATIME(ATIME);
+    sensor.setASTEP(ASTEP);
+    sensor.setGain(AS7341_GAIN_256X);
+
+    sensor.enableSpectralMeasurement(true);
+}
 
 void Color_Sensor::gatherData(){
-
     if(!sensor.getIsDataReady())
         return;
 
     Data ret{};
 
+    
     if(!sensor.readAllChannels()){
         Logger::instance().log("Sensor read failed");
         return;
@@ -47,6 +59,7 @@ const Color_Sensor::Data& Color_Sensor::getReadings() {
     ready_to_read = false;
     return readings;
 }
+
 
 
 

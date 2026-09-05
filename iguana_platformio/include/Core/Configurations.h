@@ -5,8 +5,8 @@
     RunProgram program;
 
 #elif defined(TEST_STOPPING)
-    #include "TestProgram.hpp"
-    TestProgram program;
+    #include "ProgramFiles/StoppingTestProgram.cpp"
+    StoppingTestProgram program;
 
 #elif defined(TEST_BATTERY)
     #include "RelayProgram.hpp"
@@ -15,4 +15,7 @@
 #elif defined(RELAY)
     #include "RelayProgram.hpp"
     RelayProgram program;
+#elif defined(DEMO)
+    #include "ProgramFiles/DemoProgram.cpp"
+    DemoProgram program;
 #endif

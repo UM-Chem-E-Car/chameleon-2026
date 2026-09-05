@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "ConfigVariables.h"
 
-using LogMode = Config::Logging::LogMode;
+using LogMode = CONFIG::LOGGING::LogMode;
 
 class Logger {
 public:
@@ -13,6 +13,12 @@ public:
         ERROR
     };
 
+
+    void begin(){
+        Serial.begin(CONFIG::LOGGING::SERIAL_PORT);
+        delay(50);
+        log("Logger Started");
+    }
 
     static Logger& instance(){
         static Logger logger;
@@ -26,7 +32,7 @@ public:
 
     template <typename T>
     void log(const T& value, LogType type) {
-        if (CONFIG.LOGGING.LOGMODE == LogMode::CSV &&
+        if (CONFIG::LOGGING::LOGMODE == LogMode::CSV &&
             type == LogType::INFO)
             return;
 
@@ -47,19 +53,20 @@ public:
     }
 
     void log_csv(const double arr[]){
-        size_t index = 0;
-        while (arr[index] == CONFIG.LOGGING.PRINT_END_CHAR){
-            Serial.print(String(arr[index]) + ", ");
+        if (arr == nullptr){
+            return;
+        }
+        Serial.print(String(arr[0], CONFIG::LOGGING::CSV_DECIMALS));
+        size_t index = 1;
+        while (arr[index] != CONFIG::LOGGING::PRINT_END_CHAR){
+            Serial.print(", " + String(arr[index], CONFIG::LOGGING::CSV_DECIMALS));
             index++;
         }
         Serial.println();
     }
 
 private:
-    Logger() {
-        Serial.begin(CONFIG.LOGGING.SERIAL_PORT);
-        Serial.println(F("Logger Started"));
-    }
+    Logger() {}
 
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;

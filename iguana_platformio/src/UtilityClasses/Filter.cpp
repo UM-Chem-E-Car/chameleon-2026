@@ -1,14 +1,14 @@
-#include "Filter.h"
+#include "Utility/Filter.h"
 #include "ConfigVariables.h"
 
 Filter::Filter(int WINDOW_SIZE) 
-: WS(WINDOW_SIZE), index(1), data(new float[WINDOW_SIZE]){
+: WS(WINDOW_SIZE), index(1), avg(0), data(new float[WINDOW_SIZE]){
   for (int i = 0; i < WINDOW_SIZE; i++){
     data[i] = 0;
   }
 }
 
-Filter::Filter() : Filter(CONFIG.FILTER.WINDOW_SIZE){}
+Filter::Filter() : Filter(CONFIG::FILTER::WINDOW_SIZE){}
 
 float Filter::newAverage(float input) {
   int windex = index % WS;
@@ -31,7 +31,7 @@ float Filter::newAverage(float input) {
 
 DDx::DDx(float dxn) : dx(dxn) {}
 
-DDx::DDx() : DDx(CONFIG.RUNTIME.DT){}
+DDx::DDx() : DDx(CONFIG::RUNTIME::DT){}
 
 float DDx::der(float new_value){
     float d = (new_value - last_value)/dx;

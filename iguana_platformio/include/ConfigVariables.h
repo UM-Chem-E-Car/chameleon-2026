@@ -1,50 +1,68 @@
 #pragma once
 
+
 #define VALVE_PIN A2
-#define RELAY_PIN A0
+#define RELAY_PIN 2
 #define VALVE_PIN_INPUT_LIMIT 50
 
-struct Config {
+namespace CONFIG {
 
-    struct Runtime {
-        int DT;
-        int SLOPE_GRACE_PERIOD;
-    } RUNTIME;
+    namespace RUNTIME {
+        constexpr int DT = 1;
+        constexpr unsigned long SLOPE_GRACE_PERIOD = 10000UL;
+        
+        enum ExitBehavior {
+            DELAY, LOOP, EXIT
+        };
+        constexpr ExitBehavior EXIT_BEHAVIOR = LOOP;
+    };
 
-    struct Filter {
-        int WINDOW_SIZE;
-    } FILTER;
+    namespace FILTER {
+        constexpr int WINDOW_SIZE = 65;
+    };
 
-    struct Sensor {
-        int ATIME;
-        int ASTEP;
-        double VALUE_GAIN;
+    namespace SENSOR {
+        constexpr int ATIME = 25;
+        constexpr int ASTEP = 99;
+        constexpr double VALUE_GAIN = 10000;
 
-    } SENSOR;
+    };
     
-    struct Reaction {
-        double TRIGGER_VALUE;
-        int TRIGGER_COUNT;
-    } REACTION;
+    namespace ALGOS {
+        
+    }
 
-    struct Car {
-        double CAR_A;
-        double CAR_B;
-        double CURVE_A;
-        double CURVE_B;
-    } CAR;
+    namespace REACTION {
+        constexpr double TRIGGER_VALUE = 0.001737;
+        constexpr int TRIGGER_COUNT = 3;
+    };
 
-    struct Logging {
+    namespace CAR {
+        constexpr double CAR_A = 0.5657;
+        constexpr double CAR_B = 0.000007;
+        constexpr double CURVE_A = -0.000375;
+        constexpr double CURVE_B = 37.5;
+    };
+
+    namespace LOGGING {
         enum LogMode{
             MAIN,
             CSV
-        } LOGMODE;
-        int SERIAL_PORT;
+        };
+        
+        constexpr LogMode LOGMODE = MAIN;
+        constexpr int SERIAL_PORT = 9600;
 
-        double PRINT_END_CHAR;
-        const char* FIELDS;
-    } LOGGING;
+        constexpr int CSV_DECIMALS = 5;
+
+        constexpr double PRINT_END_CHAR = -293482;
+        constexpr const char* FIELDS = "Time, v, b, c, g, gy, y, o, r, cl, nir, Value, Average Value, Delta, Average Delta";
+    };
+
+    namespace TESTING {
+        constexpr unsigned long STOPPING_END_TEST_TIME = 10000UL;
+        constexpr unsigned long BATTERY_SIMULATED_END_TIME = 25000UL;
+        constexpr int BATTERY_SIMULATED_VALUE = 0;
+    }
 
 };
-
-extern Config CONFIG;
