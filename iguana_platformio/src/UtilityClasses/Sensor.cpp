@@ -10,8 +10,7 @@ Color_Sensor::Color_Sensor() : Color_Sensor(CONFIG::SENSOR::ATIME, CONFIG::SENSO
 
 
 void Color_Sensor::begin() {
-    sensor.begin();
-    if (false){
+    if (!sensor.begin()){
             Logger::instance().log("Sensor Not Started", Logger::LogType::ERROR);
     }
     sensor.setATIME(ATIME);

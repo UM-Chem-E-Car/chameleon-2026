@@ -10,8 +10,11 @@ class StoppingTestProgram : public RunProgram {
     }
     
     bool move_car() override {
-        logger.log("RUN_COMPLETE", Logger::LogType::HEADER);
         return false;
+    }
+
+    void finish() override {
+        return;
     }
 };
 

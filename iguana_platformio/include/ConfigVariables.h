@@ -1,5 +1,12 @@
 #pragma once
 
+#include "Utility/AlgorithmSet.h"
+
+//DEFINE YOUR ALGOS IN GLOBAL NAMESPACE
+#include "AlgoInterfaces/RxnOver_RedOrange.h"
+#include "AlgoInterfaces/CalcDist_Linear.h"
+#include "AlgoInterfaces/TimeRun_Linear.h"
+
 
 #define VALVE_PIN A2
 #define RELAY_PIN 2
@@ -29,20 +36,17 @@ namespace CONFIG {
     };
     
     namespace ALGOS {
-        
+
+
+        typedef AlgorithmSet<
+            RxnOver_RedOrange,
+            CalcDist_Linear,
+            TimeRun_Linear
+        > Algorithm;
+
     }
 
-    namespace REACTION {
-        constexpr double TRIGGER_VALUE = 0.001737;
-        constexpr int TRIGGER_COUNT = 3;
-    };
 
-    namespace CAR {
-        constexpr double CAR_A = 0.5657;
-        constexpr double CAR_B = 0.000007;
-        constexpr double CURVE_A = -0.000375;
-        constexpr double CURVE_B = 37.5;
-    };
 
     namespace LOGGING {
         enum LogMode{
@@ -50,17 +54,17 @@ namespace CONFIG {
             CSV
         };
         
-        constexpr LogMode LOGMODE = MAIN;
+        constexpr LogMode LOGMODE = CSV;
         constexpr int SERIAL_PORT = 9600;
 
         constexpr int CSV_DECIMALS = 5;
 
         constexpr double PRINT_END_CHAR = -293482;
-        constexpr const char* FIELDS = "Time, v, b, c, g, gy, y, o, r, cl, nir, Value, Average Value, Delta, Average Delta";
+        constexpr const char* FIELDS = "Time, v, b, c, g, gy, y, o, r, cl, nir";//, Value, Average Value, Delta, Average Delta";
     };
 
     namespace TESTING {
-        constexpr unsigned long STOPPING_END_TEST_TIME = 10000UL;
+        constexpr unsigned long STOPPING_END_TEST_TIME = 60000UL;
         constexpr unsigned long BATTERY_SIMULATED_END_TIME = 25000UL;
         constexpr int BATTERY_SIMULATED_VALUE = 0;
     }

@@ -2,20 +2,22 @@
 
 #if defined(RUN_CAR)
     #include "ProgramFiles/RunProgram.cpp"
-    RunProgram program;
+    using ActiveProgram = RunProgram;
 
 #elif defined(TEST_STOPPING)
     #include "ProgramFiles/StoppingTestProgram.cpp"
-    StoppingTestProgram program;
+    using ActiveProgram = StoppingTestProgram;
 
 #elif defined(TEST_BATTERY)
     #include "RelayProgram.hpp"
-    RelayProgram program;
+    using ActiveProgram = RelayProgram;
 
 #elif defined(RELAY)
-    #include "RelayProgram.hpp"
-    RelayProgram program;
+    #include "ProgramFiles/RelayProgram.cpp"
+    using ActiveProgram = RelayProgram;
 #elif defined(DEMO)
     #include "ProgramFiles/DemoProgram.cpp"
-    DemoProgram program;
+    using ActiveProgram = DemoProgram;
 #endif
+
+ActiveProgram program;

@@ -16,7 +16,7 @@ protected:
 
 
 
-    void finish();
+    virtual void finish();
     virtual bool wait_for_valve_open() = 0;
 
     virtual void spin_once() = 0;

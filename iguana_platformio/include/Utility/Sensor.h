@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 #include <Adafruit_AS7341.h>
 

@@ -4,10 +4,13 @@
 #include "Utility/Filter.h"
 #include "Core/BaseProgram.h"
 #include "Core/RunVariables.h"
+#include "AlgoInterfaces/BaseAlgos/ReactionOverAlgorithm.h"
+#include "AlgoInterfaces/BaseAlgos/CalcDistAlgorithm.h"
+#include "AlgoInterfaces/BaseAlgos/TimeRunAlgorithm.h"
 
 class RunProgram : public BaseProgram {
 public:
-    RunProgram() : BaseProgram(Logger::instance()), sensor(Color_Sensor()), valueFilter(Filter()), derFilter(Filter()), derivative(DDx()), run_data(RunData()){}
+    RunProgram() : BaseProgram(Logger::instance()), sensor(Color_Sensor()), run_data(RunData()){}
 
     void setup_impl() override {
         //Hardware Setup
@@ -48,10 +51,10 @@ public:
         
         Color_Sensor::Data data = sensor.getReadings();
 
-        double value = data.r/data.o;
-        double avg_value = valueFilter.newAverage(value);
-        double delta_value = derivative.change(value);
-        double avg_delta_value = derFilter.newAverage(delta_value);
+        // double value = data.r/data.o;
+        // double avg_value = valueFilter.newAverage(value);
+        // double delta_value = derivative.change(value);
+        // double avg_delta_value = derFilter.newAverage(delta_value);
 
         
 
@@ -67,35 +70,39 @@ public:
             data.r, 
             data.cl, 
             data.nir, 
-            value, 
-            avg_value, 
-            delta_value, 
-            avg_delta_value, 
+            // value, 
+            // avg_value, 
+            // delta_value, 
+            // avg_delta_value, 
             CONFIG::LOGGING::PRINT_END_CHAR};
         logger.log_csv(printarr);
+
+
+        
+
+        return rxnOver.verifyReactionDone(data, run_data.currentTime());
 
         if (CONFIG::RUNTIME::SLOPE_GRACE_PERIOD > run_data.currentTime()){
             return false;
         }
-        
-        if (abs(avg_delta_value) < CONFIG::REACTION::TRIGGER_VALUE){
-            run_data.triggers_hit++;
-            if (run_data.triggers_hit >= CONFIG::REACTION::TRIGGER_COUNT){
-                run_data.time_reaction_end = run_data.currentTime();
-                run_data.reaction_value = value;
-                return true;
-            }
-        }
+
+        // if (abs(avg_delta_value) < CONFIG::REACTION::TRIGGER_VALUE){
+        //     run_data.triggers_hit++;
+        //     if (run_data.triggers_hit >= CONFIG::REACTION::TRIGGER_COUNT){
+        //         run_data.time_reaction_end = run_data.currentTime();
+        //         run_data.reaction_value = value;
+        //         return true;
+        //     }
+        // }
         return false;
     }
 
     void calculate_car_run_time() override {
-        float estimated_distance = CONFIG::CAR::CURVE_A * run_data.time_reaction_end + CONFIG::CAR::CURVE_B;
-        float calculated_time = (estimated_distance / CONFIG::CAR::CAR_A + CONFIG::CAR::CAR_B)*1000;
-
-        run_data.time_to_run = calculated_time + run_data.currentTime();
-        logger.log("Calculated Distance: " + String(estimated_distance));
-        logger.log("TIMETORUN: " + String(calculated_time));
+        calcDist.calculate(rxnOver.getReactionData());
+        timeRun.calculate(calcDist.getDistance());
+        run_data.time_to_run = timeRun.getTimeRun() + run_data.currentTime();
+        logger.log("Calculated Distance: " + String(calcDist.getDistance()));
+        logger.log("TIMETORUN: " + String(timeRun.getTimeRun()));
     }
 
     bool move_car() override {
@@ -117,4 +124,10 @@ protected:
     Filter derFilter;
     DDx derivative;
     RunData run_data;
+
+    //Algos
+    CONFIG::ALGOS::Algorithm::RxnOver rxnOver;
+    CONFIG::ALGOS::Algorithm::CalcDist calcDist;
+    CONFIG::ALGOS::Algorithm::TimeRun timeRun;
+
 };
