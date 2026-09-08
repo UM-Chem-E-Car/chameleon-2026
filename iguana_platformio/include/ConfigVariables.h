@@ -8,7 +8,7 @@
 #include "AlgoInterfaces/TimeRun_Linear.h"
 
 
-#define VALVE_PIN A2
+#define VALVE_PIN A0
 #define RELAY_PIN 2
 #define VALVE_PIN_INPUT_LIMIT 50
 

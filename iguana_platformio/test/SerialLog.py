@@ -30,13 +30,14 @@ with open(filename+str(fileNumber)+extension, "w", encoding="utf-8") as file:
             # Read a line of data from the Arduino
             data_line = ser.readline().decode('utf-8').strip()
             if not data_line:
-                continue  # nothing arrived within the timeout — loop back, check for Ctrl+C
+                continue
+             # nothing arrived within the timeout — loop back, check for Ctrl+C
             print(data_line) # Print to computer console
             file.write(data_line + "\n") # Save to the text/csv file
         except KeyboardInterrupt:
-            print("Data logging stopped.")
             break
 
+print("Data logging stopped.")
 with open("test/persistentData.dat", "w") as persistent:
     persistent.write(str(fileNumber + 1))
     persistent.close()
