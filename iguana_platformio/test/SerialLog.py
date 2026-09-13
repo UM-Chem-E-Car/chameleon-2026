@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 # Adjust 'COM3' to your Arduino port and 9600 to your baud rate
-arduino_port = "COM5" 
+arduino_port = "COM4" 
 baud_rate = 9600
 
 

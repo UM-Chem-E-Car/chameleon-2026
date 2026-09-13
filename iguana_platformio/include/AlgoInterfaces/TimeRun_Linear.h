@@ -1,19 +1,19 @@
 #pragma once
 
-#include "AlgoInterfaces/BaseAlgos/TimeRunAlgorithm.h"
-
-namespace CONSTS {
-    constexpr double CAR_A = 0.5657;
-    constexpr double CAR_B = 0.000007;
-}
-
-class TimeRun_Linear : public TimeRunAlgorithm {
+class TimeRun_Linear{
 public:
-    TimeRun_Linear();
+    TimeRun_Linear() : STORED_TIME(-1){}
 
-    void calculate(double distance) override;
-    double getTimeRun() override;
+    void calculate(double distance){
+        STORED_TIME = (distance / CAR_A + CAR_B)*1000;
+    }
+    double getTimeRun(){
+        return STORED_TIME;
+    }
 
 private:
+    const double CAR_A = 0.5657;
+    const double CAR_B = 0.000007;
+
     double STORED_TIME;
 };

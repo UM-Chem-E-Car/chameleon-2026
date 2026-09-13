@@ -1,16 +1,15 @@
 #pragma once
 
-#include "Utility/AlgorithmSet.h"
-
 //DEFINE YOUR ALGOS IN GLOBAL NAMESPACE
-#include "AlgoInterfaces/RxnOver_RedOrange.h"
+#include "AlgoInterfaces/RxnOver_Photoresistor.h"
 #include "AlgoInterfaces/CalcDist_Linear.h"
 #include "AlgoInterfaces/TimeRun_Linear.h"
 
+#include "Utility/Sensor.h"
 
 #define VALVE_PIN A0
-#define RELAY_PIN 2
-#define VALVE_PIN_INPUT_LIMIT 50
+#define RELAY_PIN 8
+#define VALVE_PIN_INPUT_LIMIT 100
 
 namespace CONFIG {
 
@@ -36,13 +35,15 @@ namespace CONFIG {
     };
     
     namespace ALGOS {
+        using SensorType = Light_Sensor;
 
+        using SensorDataType = Light_Sensor::Data;
+        using ReactionOverAlgorithm = RxnOver_Photoresistor;
+        
+        using ReactionSummaryDataType = TimeData;
+        using CalcDistAlgorithm = CalcDist_Linear;
 
-        typedef AlgorithmSet<
-            RxnOver_RedOrange,
-            CalcDist_Linear,
-            TimeRun_Linear
-        > Algorithm;
+        using TimeRunAlgorithm = TimeRun_Linear;
 
     }
 
@@ -60,7 +61,7 @@ namespace CONFIG {
         constexpr int CSV_DECIMALS = 5;
 
         constexpr double PRINT_END_CHAR = -293482;
-        constexpr const char* FIELDS = "Time, v, b, c, g, gy, y, o, r, cl, nir";//, Value, Average Value, Delta, Average Delta";
+        constexpr const char* FIELDS = "Time, Value";//, Value, Average Value, Delta, Average Delta";
     };
 
     namespace TESTING {

@@ -69,3 +69,25 @@ double Color_Sensor::getIntegrationTimeInMiliseconds() {
 
 
 
+Light_Sensor::Light_Sensor(double gain_in): ready_to_read(false), gain(gain_in), readings() {}
+
+Light_Sensor::Light_Sensor() : Light_Sensor(CONFIG::SENSOR::VALUE_GAIN){}
+
+#define SENSOR_PIN A3
+void Light_Sensor::begin() {
+    pinMode(SENSOR_PIN, INPUT);
+    ready_to_read = true;
+}
+
+void Light_Sensor::gatherData(){
+
+    readings = Data(analogRead(SENSOR_PIN));
+    ready_to_read = true;
+}
+
+const Light_Sensor::Data& Light_Sensor::getReadings() {
+    return readings;
+}
+
+
+

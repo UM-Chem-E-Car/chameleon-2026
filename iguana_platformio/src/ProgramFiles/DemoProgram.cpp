@@ -1,8 +1,9 @@
-#include "Core/BaseProgram.h"
+#include "Core/ProgramInterface.h"
 #include "Utility/Sensor.h"
 #include "Utility/Logger.h"
+#include "ConfigVariables.h"
 
-class DemoProgram : public BaseProgram {
+class DemoProgram : public Program {
 public:
     DemoProgram() : sensor((Color_Sensor())), logger(Logger::instance()){}
 
@@ -14,9 +15,7 @@ public:
         logger.log("HIHIHIHI");
     }
 
-    void spin_once() override {
-        
-
+    void loop_impl() override {
         sensor.gatherData();
         if (sensor.ready_to_read == false)
             return;

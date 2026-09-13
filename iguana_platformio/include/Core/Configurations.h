@@ -9,8 +9,8 @@
     using ActiveProgram = StoppingTestProgram;
 
 #elif defined(TEST_BATTERY)
-    #include "RelayProgram.hpp"
-    using ActiveProgram = RelayProgram;
+    #include "ProgramFiles/BatteryTestProgram.cpp"
+    using ActiveProgram = BatteryTestProgram;
 
 #elif defined(RELAY)
     #include "ProgramFiles/RelayProgram.cpp"

@@ -1,23 +1,24 @@
 #pragma once
 
-#include "AlgoInterfaces/BaseAlgos/CalcDistAlgorithm.h"
-#include "AlgoInterfaces/RxnOver_RedOrange.h"
+#include "AlgoInterfaces/CustomDataType/TimeData.h"
 
-namespace CONSTS {
-    constexpr double CURVE_A = -0.000375;
-    constexpr double CURVE_B = 37.5; 
-}
-
-class CalcDist_Linear : public CalcDistAlgorithm<TimeAndRegimeData>{
+class CalcDist_Linear{
 public:
 
-    typedef TimeAndRegimeData RxnData;
+    CalcDist_Linear() : STORED_DISTANCE(-1) {}
 
-    CalcDist_Linear();
+    void calculate(const TimeData& reactionSummary){
+        STORED_DISTANCE = CURVE_A * reactionSummary.time_reaction_end + CURVE_B;
+    }
 
-    void calculate(const RxnData& reactionSummary) override;
-    double getDistance() override;
+    double getDistance() {
+        return STORED_DISTANCE;
+    }
 
 private:
+    const double CURVE_A = -0.000375;
+    const double CURVE_B = 37.5; 
+
+
     double STORED_DISTANCE;
 };
