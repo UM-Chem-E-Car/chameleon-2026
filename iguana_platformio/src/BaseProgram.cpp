@@ -1,20 +1,20 @@
 #include "Core/BaseProgram.h"
 #include "ConfigVariables.h"
+#include "Core/RunVariables.h"
+#include "Utility/Logger.h"
 
 RunData RUN_DATA;
+BaseProgram::BaseProgram() {}
 
-BaseProgram::BaseProgram() : BaseProgram(Logger::instance()) {}
-
-BaseProgram::BaseProgram(Logger& logger_in) : logger(logger_in) {}
 
 void BaseProgram::setup_impl(){
-    logger.log("Program Start");
+    Logger::instance().log("Program Start");
 }
 
 void BaseProgram::finish(){
     static bool finishedLogged = false;
     if (!finishedLogged){
-        logger.log("Program Finished");
+        Logger::instance().log("Program Finished");
         finishedLogged = true;
     }
     switch (CONFIG::RUNTIME::EXIT_BEHAVIOR){
@@ -49,8 +49,10 @@ void BaseProgram::loop_impl() {
     spin_once();
     if (RUN_DATA.stage == RunData::WAITING_FOR_VALVE_OPEN){
         bool valve_opened = wait_for_valve_open(); 
-        if (valve_opened)
+        if (valve_opened){
+            collect_initial_data();
             RUN_DATA.stage = RunData::RECORDING_DATA;
+        }
         else
             return;
     } 

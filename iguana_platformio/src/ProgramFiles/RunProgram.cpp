@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include "Utility/Logger.h"
 #include "Utility/Sensor.h"
 #include "Utility/Filter.h"
 #include "Core/BaseProgram.h"
@@ -7,7 +8,7 @@
 
 class RunProgram : public BaseProgram {
 public:
-    RunProgram() : BaseProgram(Logger::instance()), sensor(CONFIG::ALGOS::SensorType()), run_data(RunData()){}
+    RunProgram() : BaseProgram(), sensor(CONFIG::ALGOS::SensorType()), run_data(RunData()){}
 
     void setup_impl() override {
         //Hardware Setup
@@ -41,6 +42,11 @@ public:
         run_data.valve_open_time = millis();
         return true;
     }
+
+    void collect_initial_data() override {
+        rxnOver.setInitialValues(nullptr);
+    }
+
 
     bool collect_and_check_data() override {
         if (sensor.ready_to_read == false)
@@ -93,6 +99,8 @@ public:
     }
 
 protected:
+    Logger& logger = Logger::instance();
+
     CONFIG::ALGOS::SensorType sensor;
     Filter valueFilter;
     Filter derFilter;

@@ -2,7 +2,7 @@
 
 //DEFINE YOUR ALGOS IN GLOBAL NAMESPACE
 #include "AlgoInterfaces/RxnOver_Photoresistor.h"
-#include "AlgoInterfaces/CalcDist_Linear.h"
+#include "AlgoInterfaces/CalcDist_Interpolate.h"
 #include "AlgoInterfaces/TimeRun_Linear.h"
 
 #include "Utility/Sensor.h"
@@ -40,8 +40,8 @@ namespace CONFIG {
         using SensorDataType = Light_Sensor::Data;
         using ReactionOverAlgorithm = RxnOver_Photoresistor;
         
-        using ReactionSummaryDataType = TimeData;
-        using CalcDistAlgorithm = CalcDist_Linear;
+        using ReactionSummaryDataType = ValueDiff;
+        using CalcDistAlgorithm = CalcDist_Interpolate;
 
         using TimeRunAlgorithm = TimeRun_Linear;
 

@@ -20,4 +20,4 @@
     using ActiveProgram = DemoProgram;
 #endif
 
-ActiveProgram program;
+ActiveProgram program;  

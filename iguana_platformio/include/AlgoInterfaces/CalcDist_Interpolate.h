@@ -2,10 +2,10 @@
 
 #include "AlgoInterfaces/CustomDataType/TimeData.h"
 
-class CalcDist_Linear{
+class CalcDist_Interpolate{
 public:
 
-    CalcDist_Linear() : STORED_DISTANCE(-1) {}
+    CalcDist_Interpolate() : STORED_DISTANCE(-1) {}
 
     void calculate(const ValueDiff& reactionSummary){
         STORED_DISTANCE = CURVE_A * reactionSummary.diff + CURVE_B;
@@ -16,8 +16,8 @@ public:
     }
 
 private:
-    const double CURVE_A = -0.000375;
-    const double CURVE_B = 37.5; 
+    const double CURVE_A = 0;
+    const double CURVE_B = 17.10; 
 
 
     double STORED_DISTANCE;

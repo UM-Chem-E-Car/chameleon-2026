@@ -12,7 +12,7 @@ public:
     }
 
 private:
-    const double CAR_A = 0.5657;
+    const double CAR_A = 0.5;
     const double CAR_B = 0.000007;
 
     double STORED_TIME;
