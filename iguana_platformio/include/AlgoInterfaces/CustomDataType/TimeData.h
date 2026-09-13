@@ -10,3 +10,14 @@ struct TimeData {
         return true;
     }
 };
+
+struct ValueDiff {
+    double diff;
+
+    ValueDiff() : diff(-1){};
+    bool operator==(const ValueDiff& rhs) const {
+        if (diff != rhs.diff)
+            return false;
+        return true;
+    }
+};

@@ -73,7 +73,7 @@ Light_Sensor::Light_Sensor(double gain_in): ready_to_read(false), gain(gain_in),
 
 Light_Sensor::Light_Sensor() : Light_Sensor(CONFIG::SENSOR::VALUE_GAIN){}
 
-#define SENSOR_PIN A3
+#define SENSOR_PIN A2
 void Light_Sensor::begin() {
     pinMode(SENSOR_PIN, INPUT);
     ready_to_read = true;

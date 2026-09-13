@@ -11,39 +11,55 @@ class RxnOver_Photoresistor
 public:
 
 
-    RxnOver_Photoresistor() : valueFilter(Filter()), derFilter(Filter()), derivative(DDx()), triggers_hit(0), STORED_REACTION_DATA(){}
+    RxnOver_Photoresistor() : valueFilter(Filter(50)), derFilter(Filter()), derivative(DDx()), STORED_REACTION_DATA(){}
+
+    void setInitialValues(void* values){
+
+    }
 
     bool verifyReactionDone(const Light_Sensor::Data& data, const double& time){
         double value = data.value;
-        //double avg_value = valueFilter.newAverage(value);
-        double delta_value = derivative.change(value);
-        double avg_delta_value = derFilter.newAverage(delta_value);
 
-        if (abs(avg_delta_value) < TRIGGER_VALUE){
-            triggers_hit++;
-            // Logger::instance().log("TRIGGER HITS: " + String(triggers_hit));
-            if (triggers_hit >= TRIGGER_COUNT){
-                STORED_REACTION_DATA.time_reaction_end = time;
-                return true;
-            }
+        if (time < 50){
+            return false;
         }
-    return false;
+        valueFilter.newAverage(value);
+
+        static double bavg = 0;
+        static double bno = 0;
+        if (time > 500 && time < 1000){
+            bavg += value;
+            bno++;
+            return false;
+        }
+
+        static double eavg = 0;
+        static double eno = 0;
+        if (time > 59000 && time < 60000){
+            eavg += value;
+            eno++;
+            return false;
+        }
+
+        if (time > 60000){
+            STORED_REACTION_DATA.diff = bavg/bno - eavg/eno;
+            return true;
+        }
+
+        
+        return false;
     }
 
-    const TimeData& getReactionData() {
-        if (STORED_REACTION_DATA == TimeData()){Logger::instance().log("INVALID REACTION DATA", Logger::LogType::ERROR);}
+    const ValueDiff& getReactionData() {
         return STORED_REACTION_DATA;
     };
 
 private:
-    const double TRIGGER_VALUE = .001;
-    const double TRIGGER_COUNT = 3;
 
     Filter valueFilter;
     Filter derFilter;
     DDx derivative;
 
-    int triggers_hit;
 
-    TimeData STORED_REACTION_DATA;
+    ValueDiff STORED_REACTION_DATA;
 };
