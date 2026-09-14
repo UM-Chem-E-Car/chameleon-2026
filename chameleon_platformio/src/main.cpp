@@ -27,7 +27,7 @@ void loop(){
 
     // //REPLACE
 
-    sensor.gatherData();
+    //sensor.gatherData();
 
 
 
@@ -43,17 +43,17 @@ void loop(){
         }
     }
     
-    if (sensor.ready_to_read){
+    if (true){
 
         //MEASURING DATA
-        Color_Sensor::Data data = sensor.getReadings();
-
+        //Color_Sensor::Data data = sensor.getReadings();
+        double data = analogRead(SENSOR_PIN);
 
         //ANALYSE DATA
 
         double time = millis();
         //PLACE VARIABLE HERE
-        double value = data.r/data.o;
+        double value = data;
         //valueMedian.add(value);
         double avg_value = valueFilter.average(value);
         double delta_value = derivative.change(value);
@@ -65,8 +65,9 @@ void loop(){
         //PRINTING DATA
         //Serial.println("TIME: " + String(millis() - car.time_valve_open) + " " + data.tostring());
         
-        double printarr[] = {millis() - car.time_valve_open, data.v, data.b, data.c, data.g, data.gy, data.y, data.o, data.r, data.cl, data.nir, value, avg_value, delta_value, avg_delta_value};
-        printData(printarr, 16);
+        //double printarr[] = {millis() - car.time_valve_open, data.v, data.b, data.c, data.g, data.gy, data.y, data.o, data.r, data.cl, data.nir, value, avg_value, delta_value, avg_delta_value};
+        double printarr[] = {millis() - car.time_valve_open, value};
+        printData(printarr, 2);
 
         //Serial.println(String(car.currentTime(), 3) + ", " + String(value, 4) + ", " + String(avg_value, 4) + ", " + String(delta_value, 4) + ", " + String(avg_delta_value, 6));
         
@@ -74,11 +75,11 @@ void loop(){
         //MY CODE
         if (car.stage == Car::Stage::RECORDING_DATA && SLOPE_GRACE_PERIOD < car.currentTime() && abs(avg_delta_value) < TRIGGER_VALUE){
             if (!car.first_delta_hit) {
-                Serial.println("FIRST DELTA HIT");
+                //Serial.println("FIRST DELTA HIT");
                 car.first_delta_hit = true;
             } else {
-                Serial.println("RXN DONE");
-                car.stage = Car::Stage::CALCULATING_DISTANCE;
+                //Serial.println("RXN DONE");
+                //car.stage = Car::Stage::CALCULATING_DISTANCE;
                 reaction.time_reaction_end = car.currentTime();
                 reaction.reaction_value = avg_delta_value;
             }
@@ -108,7 +109,8 @@ void init_variables(){
     car.time_car_move = -1;
     reaction.reaction_value = -1;
     car.first_delta_hit = false;
-    sensor.init();
+    pinMode(SENSOR_PIN, INPUT);
+    //sensor.init();
 
 
     digitalWrite(RELAY_PIN, LOW);
@@ -131,10 +133,10 @@ void waitForValveOpen(){
     car.time_valve_open = millis();
     car.stage = Car::Stage::RECORDING_DATA;
     //Serial.println("VALVE IS ON");
-    sensor.gatherData();
+    //sensor.gatherData();
 
     //Serial.println("Integration Time: " + String(sensor.getIntegrationTimeInMiliseconds()));
-    Serial.println("Time, v, b, c, g, gy, y, o, r, cl, nir, Value, Average Value, Delta, Average Delta");
+    Serial.println("Time, Value");
 
     if (sensor.ready_to_read){
         reaction.init_reaction_value = sensor.getReadings().r;

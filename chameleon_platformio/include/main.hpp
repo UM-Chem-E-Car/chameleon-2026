@@ -7,7 +7,7 @@
 int VALVE_PIN_IN = A2;
 #define VALVE_PIN_INPUT_LIMIT 500
 #define RELAY_PIN 6
-
+#define SENSOR_PIN A3
 
 #define DT 1
 #define WINDOW_SIZE 65
